@@ -27,6 +27,7 @@ xone_data = pd.read_csv('source_csv/XboxOne_GameSales.csv',encoding='unicode_esc
 # print(ps4_data.head())
 # print(xbox_one_data.head())
 
+######################################################################
 # TODO: Append data from 2019 tables to vg_data
 # Columns for ps4 dataset are Game/Year/Genre/Publisher/North America/Europe/Japan/Rest of World/Global
 # Columns for vg_data are Name/Platform/Year_of_Release/Genre/Publisher/NA_Sales/EU_Sales/JP_Sales/Other_Sales/Global_Sales
@@ -66,6 +67,13 @@ print(vg_data['Platform'].unique())
 #  'PS' 'XB' 'PC' '2600' 'PSP' 'XOne' 'WiiU' 'GC' 'GEN' 'DC' 'PSV' 'SAT'
 #  'SCD' 'WS' 'NG' 'TG16' '3DO' 'GG' 'PCFX']
 
-vg_data = vg_data['Year' > 2009]
-print(len(vg_data))
+# vg_data = vg_data['Year']
+# print(len(vg_data))
 
+######################################################################
+# TODO: Global Top Platforms
+
+vg_data = pd.read_csv('output_csv/vg_data.csv')
+top_platforms = vg_data['Platform']
+platform_series = top_platforms.value_counts(ascending=False)
+print(platform_series)
