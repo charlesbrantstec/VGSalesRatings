@@ -57,16 +57,16 @@ plt.xlabel('Regions')
 platforms = vg_data['Platform'].unique()
 regions = ['NA_Sales','EU_Sales','JP_Sales','Other_Sales','Global_Sales']
 
-csvs = [('Europe','EU_Sales','output_csv/eu.csv'),('Global','Global_Sales','output_csv/gl.csv'),('Japan','JP_Sales','output_csv/jp.csv'),
-        ('North America','NA_Sales','output_csv/na.csv'),('Other Regions','Other_Sales','output_csv/ot.csv')]
+csvs = [('Europe','EU_Sales','output_csv/eu.csv','visualizations/eu_consoles.png'),
+        ('Global','Global_Sales','output_csv/gl.csv','visualizations/gl_consoles.png'),
+        ('Japan','JP_Sales','output_csv/jp.csv','visualizations/jp_consoles.png'),
+        ('North America','NA_Sales','output_csv/na.csv','visualizations/na_consoles.png'),
+        ('Other Regions','Other_Sales','output_csv/ot.csv','visualizations/ot_consoles.png')]
 
 pdf = pd.DataFrame()
 
 def reg_platforms(region,csv):
     platforms_rank = {}
-    # df = pd.DataFrame()
-    # df['platform'] = None
-    # df['count'] = None 
     for platform in platforms:
         platform_data = vg_data[vg_data['Platform'] == platform]
         sum = platform_data[region].sum()
@@ -78,45 +78,22 @@ def reg_platforms(region,csv):
     pdf.to_csv(csv)
     # print(pdf)
 
+def region_consoles(csv,region,filepath):
+    data = pd.read_csv(csv, index_col='platform')
+    plt.figure(figsize=(10,6))
+    plt.title('Top Consoles: ' + region)
+    plot = sns.barplot(x = data.index, y=data['units'])
+    plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
+    plt.ylabel('Games per Unit')
+    plt.xlabel('Platforms')
+    plt.savefig(filepath)
+    # plt.show()
+
 for csv in csvs:
     reg_platforms(csv[1],csv[2])
-
-# reg_platforms(csvs[0][1],csvs[0][2])
-
-    
-
-# for region in regions:
-#     reg_platforms(region)
-
-# reg_platforms('JP_Sales')
-# reg_platforms('NA_Sales')
-# reg_platforms('EU_Sales')
-# reg_platforms('Other_Sales')
-# reg_platforms('Global_Sales')
+    region_consoles(csv[2],csv[0],csv[3])
 
 
-# for csv in csvs:
-#     data = pd.read_csv(csv[1],index_col='platform')
-#     region = csv[0]
-#     plt.figure(figsize=(10,6))
-#     plt.title('Top Platforms: f{region}')
-#     plot = sns.barplot(x = data.index, y=data['units']
-# # ,order=pdf.sort_values([1],ascending=False)[0],palette="mako"
-#     )
-#     plt.ylabel('Games per Unit')
-#     plt.xlabel('Platforms')
-#     plt.show()
-
-data = pd.read_csv('output_csv/jp.csv', index_col='platform')
-# data['units'] = data['units'].astype(int)
-plt.figure(figsize=(10,6))
-# plt.title('Top Platforms: f{region}')
-plot = sns.barplot(x = data.index, y=data['units'])
-plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
-plt.ylabel('Games per Unit')
-plt.xlabel('Platforms')
-plt.show()
-print(data.head())
 
 
 # sdf = pd.read_csv('output_csv/jp.csv')
