@@ -66,38 +66,56 @@ def reg_platforms(region):
     for platform in platforms:
         platform_data = vg_data[vg_data['Platform'] == platform]
         sum = platform_data[region].sum()
-        platforms_rank.update({platform:f"{sum*1000000:,.0f}"})
+        platforms_rank.update({platform:f"{int(sum*10000000):,.3f}"})
         platforms_ranked = sorted(platforms_rank.items(), key=lambda x: x[1], reverse=True)
     pdf = pd.DataFrame(platforms_ranked)
-    # pdf.to_csv('output_csv/jp.csv')
+    pdf.to_csv('output_csv/jp.csv')
     # pdf.to_csv('output_csv/na.csv')
     # pdf.to_csv('output_csv/eu.csv')
     # pdf.to_csv('output_csv/ot.csv')
     # pdf.to_csv('output_csv/gl.csv')
+    print(pdf)
 
 
 # for region in regions:
 #     reg_platforms(region)
 
-# reg_platforms('JP_Sales')
+reg_platforms('JP_Sales')
 # reg_platforms('NA_Sales')
 # reg_platforms('EU_Sales')
 # reg_platforms('Other_Sales')
 # reg_platforms('Global_Sales')
 
-sdf = pd.read_csv('output_csv/jp.csv')
-# sdf = sdf.rename(columns = {0:'platform'})
-
-# plt.figure(figsize=(10,6))
-# plt.title('Top Platforms: Japan')
-# plot = sns.barplot(x = pdf.index, y=pdf[pdf.columns[1]]
+# csvs = [('Europe','output_csv/eu.csv'),('Global','output_csv/gl.csv'),('Japan','output_csv/jp.csv'),
+#         ('North America','output_csv/na.csv'),('Other Regions','output_csv/ot.csv')]
+# for csv in csvs:
+#     data = pd.read_csv(csv[1],index_col='platform')
+#     region = csv[0]
+#     plt.figure(figsize=(10,6))
+#     plt.title('Top Platforms: f{region}')
+#     plot = sns.barplot(x = data.index, y=data['units']
 # # ,order=pdf.sort_values([1],ascending=False)[0],palette="mako"
-# )
-# plt.ylabel('Game Sales')
+#     )
+#     plt.ylabel('Games per Unit')
+#     plt.xlabel('Platforms')
+#     plt.show()
+
+data = pd.read_csv('output_csv/jp.csv',index_col='platform')
+# data['units'] = data['units'].astype(int)
+# plt.figure(figsize=(10,6))
+# # plt.title('Top Platforms: f{region}')
+# plot = sns.barplot(x = data.index, y=data['units'])
+# plt.ylabel('Games per Unit')
 # plt.xlabel('Platforms')
 # plt.show()
+print(data.head())
 
-print(sdf)
+
+# sdf = pd.read_csv('output_csv/jp.csv')
+# sdf = sdf.rename(columns = {0:'platform'})
+
+
+# print(sdf)
 
 
 # print(platforms_ranked)
