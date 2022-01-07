@@ -44,11 +44,15 @@ sales_df.index = sales_df['region']
 # sales_df = pd.read_csv('output_csv/sales_df.csv',index_col='region')
 
 plt.figure(figsize=(10,6))
-plt.title('Average Game Units Sold By Region')
-sales_plot = sns.barplot(x = sales_df.index, y=sales_df['sales'],order=sales_df.sort_values('sales',ascending=False).index,palette="mako")
-plt.ylabel('Average Units per Game')
-plt.xlabel('Regions')
+# plt.title('Game Units Sold By Region')
+# plot = sns.barplot(x = sales_df.index, y=sales_df['sales'],order=sales_df.sort_values('sales',ascending=False).index,palette="mako")
+plot = sns.barplot(x=sales_df['sales'],order=sales_df.sort_values('sales',ascending=False).index, y = sales_df.index, palette="mako")
+# plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
+plt.xlabel('Average Units Sold per Game (in millions)')
+plt.ylabel('Regions')
 # plt.show()
+
+# print(sales_df)
 
 ######################################################################
 # TODO: Top platforms by region
@@ -65,6 +69,7 @@ csvs = [('Europe','EU_Sales','output_csv/eu.csv','visualizations/eu_consoles.png
 
 pdf = pd.DataFrame()
 
+# This function creates a dataframe for each region with games units sold by platform
 def reg_platforms(region,csv):
     platforms_rank = {}
     for platform in platforms:
@@ -78,59 +83,192 @@ def reg_platforms(region,csv):
     pdf.to_csv(csv)
     # print(pdf)
 
+# This function creates a barplot for each region with games units sold by platform
 def region_consoles(csv,region,filepath):
     data = pd.read_csv(csv, index_col='platform')
     plt.figure(figsize=(10,6))
     plt.title('Top Consoles: ' + region)
-    plot = sns.barplot(x = data.index, y=data['units'])
+    plot = sns.barplot(x = data.index, y=data['units'],palette='mako_r')
     plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
-    plt.ylabel('Games per Unit')
+    plt.ylabel('Total Game Units Sold by Platform')
     plt.xlabel('Platforms')
     plt.savefig(filepath)
-    # plt.show()
+    plt.show()
 
-for csv in csvs:
-    reg_platforms(csv[1],csv[2])
-    region_consoles(csv[2],csv[0],csv[3])
+# for csv in csvs:
+    # reg_platforms(csv[1],csv[2])
+    # region_consoles(csv[2],csv[0],csv[3])
 
+######################################################################
+# TODO: Create chart to show top 10 games globally
 
+# print(top10)
+# print(global_sales)
+# print(top10.index.tolist())
+head = vg_data[0:9]
+top_10_games = head['Name'].values.tolist()
+top_10_sales = head['Global_Sales'].values.tolist()
+top_sales = []
 
+for sales in top_10_sales:
+    sales = sales*1000000
+    top_sales.append(sales)
 
-# sdf = pd.read_csv('output_csv/jp.csv')
-# sdf = sdf.rename(columns = {0:'platform'})
+top_10_df = pd.DataFrame(columns=['game','sales'])
+top_10_df['game'] = top_10_games
+top_10_df['sales'] = top_10_sales
+print(top_10_df)
 
+plt.figure(figsize=(10,6))
+plt.title('Top 10 Games')
+plot = sns.barplot(x = top_10_df['game'], y=top_10_df['sales'],palette='mako')
+plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
+plt.ylabel('Total Unit Sales (in millions)')
+plt.xlabel('Games')
+plt.show()
 
-# print(sdf)
+######################################################################
+# TODO: Visualize top 10 games by region
 
+regions = [('North America','NA_Sales'),('Europe','EU_Sales'),('Japan','JP_Sales'),('Other','Other_Sales')]
 
-# print(platforms_ranked)
-# print(platforms_ranked[0][0])
-    
-# print(pdf)
+def region_df_plots(region,region_sales):
+    region_df = pd.DataFrame(columns=['games','region_sales'])
+    region_df['games'] = vg_data['Name']
+    region_df['region_sales'] = vg_data[region_sales]
+    region_df = region_df[0:9]
+    # print(region_df.head())
+    plt.figure(figsize=(10,6))
+    plt.title('Top 5 Games: ' + region)
+    plot = sns.barplot(x=region_df['games'],y=region_df['region_sales'],order=region_df.sort_values('region_sales',ascending=False)['games'],palette='mako')
+    plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
+    plt.ylabel('Total Unit Sales (in millions)')
+    plt.xlabel('Games')
+    plt.show()
 
-# print(platforms_ranked)
+# for region in regions:
+#     region_df_plots(region[0],region[1])
 
+######################################################################
+# TODO: Visualize top 10 genres globally
 
-# wii_data = vg_data[vg_data['Platform'] == 'Wii']
-# # print(wii_data.head())
-# # print(len(wii_data))
-# # print(wii_data.tail())
-# print(wii_data['JP_Sales'].sum())
+top_10_genres = vg_data['Genre'].unique()
+genre_list = ['Sports', 'Platform', 'Racing', 'Role-Playing', 'Puzzle', 'Misc', 'Shooter',
+ 'Simulation', 'Action', 'Fighting', 'Adventure', 'Strategy',
+ 'Action-Adventure', 'Party', 'Music', 'MMO', 'Visual Novel']
+# print(top_10_genres)
 
+genre_sales = [1365810000, 837050000, 743400000, 953629999, 243080000,
+               805500000, 1100960000, 394450000, 1805690000, 456840000,
+               243260000, 175680000, 32020000, 650000, 890000, 650000, 130000]
 
-platforms_df = pd.DataFrame()
+genre_rank = {'Sports':1365810000, 'Platform':837050000, 'Racing':743400000, 'Role-Playing':9536299, 'Puzzle':243080000,
+              'Misc':805500000, 'Shooter':1100960000,'Simulation':394450000, 'Action':1805690000, 'Fighting':456840000,
+              'Adventure':243260000, 'Strategy':175680000,'Action-Adventure':32020000, 'Party':650000, 'Music':890000,
+              'MMO':650000, 'Visual Novel':130000}
 
+for genre in genre_list:
+    genre_df = vg_data[vg_data['Genre'] == genre]
+    genre_sales = genre_df['Global_Sales'].sum()
+    genre_sales = (genre_sales*1000000).astype(int)
+    # genre_rank.append(genre_sales)
+    # print(genre_sales)
 
-# def region_platform(region):
+genre_rank = sorted(genre_rank.items(), key=lambda x: x[1], reverse=True)
+# print(genre_rank)
 
-# jp = pd.DataFrame()
-# jp.columns = ['jp_data','jp_sales']
-# jp['jp_data'] = vg_data['JP_Sales']
-# jp['jp_sales'] = vg_data['Platform']
-# jp.columns = [jp_data,jp_sales]
-# print(jp.head())
-# for platform in platforms:
-#     platform_data = vg_data[vg_data['Platform' == platform]]
+gdf = pd.DataFrame(columns=['genre','sales'])
 
+for genre_sales in genre_rank:
+    new_row = {'genre':genre_sales[0],'sales':genre_sales[1]}
+    gdf = gdf.append(new_row,ignore_index=True)
 
+# print(gdf)
+
+# print(gdf[:10])
+
+gdf = gdf[:10]
+plt.figure(figsize=(10,6))
+plt.title('Game Units Sold by Genre')
+plot = sns.barplot(x=gdf['sales'], y = gdf['genre'],order=gdf.sort_values('sales',ascending=False)['genre'], palette="mako")
+plt.xlabel('Game Units (in billions)')
+plt.ylabel(None)
+plt.show()
+
+# mmo = vg_data[vg_data['Genre'] == 'MMO']
+# mmo_sales = mmo['Global_Sales'].sum()
+# print(mmo_sales*1000000)
+
+# World of Warcraft: Warlords of Draenor incorrectly labeled as an action game instead of Role-Playing Game
+
+######################################################################
+# TODO: Top 10 publishers by region
+
+rdf = pd.DataFrame(columns=['publisher','region_sales'])
+
+publishers = vg_data['Publisher'].unique()
+
+regions = ['NA_Sales','EU_Sales','JP_Sales','Other_Sales','Global_Sales']
+pub_dict = {}
+
+rp = []
+
+def region_publishers(region):
+    for publisher in publishers:
+        pdf = pd.DataFrame(columns=['publisher','region_sales'])
+        pdf['region_sales'] = vg_data[region]
+        pdf['publisher'] = vg_data['Publisher']
+        pub_df = pdf[pdf['publisher'] == publisher]
+        # pub_sales = pub_df['Global_Sales'].sum()
+        pub_sales = pub_df['region_sales'].sum()
+        pub_sales = (pub_sales*1000000).astype(int)
+        pub_dict.update({publisher:pub_sales})
+        pub_rank = sorted(pub_dict.items(), key=lambda x: x[1], reverse=True)
+        # pub_rank = pub_rank[:10]
+
+    # rp.append(pub_rank)
+    # print(region + ': Publisher Rank')
+    # print(pub_rank[:10])
+    # print(pub_rank[:50])    
+
+print(region_publishers('Global_Sales'))
+# for region in regions:
+#     region_publishers(region)
+
+na_sales_pub = [('Nintendo', 816970000), ('Electronic Arts', 605730000), ('Activision', 446010000),
+                ('Sony Computer Entertainment', 266170000), ('Ubisoft', 263210000), ('Take-Two Interactive', 222940000),
+                ('THQ', 207720000), ('Microsoft Game Studios', 157429999), ('Atari', 109840000), ('Sega', 109270000)]
+eu_sales_pub = [('Nintendo', 419010000), ('Electronic Arts', 379950000), ('Activision', 229210000),
+                ('Sony Computer Entertainment', 186560000), ('Ubisoft', 171490000), ('Take-Two Interactive', 119250000),
+                ('THQ', 93780000), ('Sega', 81370000), ('Konami Digital Entertainment', 69460000), ('Microsoft Game Studios', 68640000)]
+jp_sales_pub = [('Nintendo', 458150000), ('Namco Bandai Games', 129149999), ('Konami Digital Entertainment', 91640000),
+                ('Sony Computer Entertainment', 74150000), ('Capcom', 71200000), ('Sega', 57500000),
+                ('Square Enix', 53010000), ('SquareSoft', 40130000), ('Enix Corporation', 32400000), ('Tecmo Koei', 29920000)]
+other_sales_pub = [('Electronic Arts', 130979999), ('Nintendo', 94680000), ('Activision', 80270000),
+                   ('Sony Computer Entertainment', 79670000), ('Take-Two Interactive', 55720000), ('Ubisoft', 52400000),
+                   ('THQ', 31890000), ('Konami Digital Entertainment', 30070000), ('Sega', 24050000),
+                   ('Warner Bros. Interactive Entertainment', 19960000)]
+global_sales_pub = [('Nintendo', 1788810000), ('Electronic Arts', 1131430000), ('Activision', 762930000),
+                    ('Sony Computer Entertainment', 606480000), ('Ubisoft', 495409999), ('Take-Two Interactive', 403820000),
+                    ('THQ', 338440000), ('Konami Digital Entertainment', 283570000), ('Sega', 272420000), ('Namco Bandai Games', 263360000)]
+
+titles = [('North America',na_sales_pub),('Europe',eu_sales_pub),('Japan',jp_sales_pub),
+          ('Other Countries',other_sales_pub),('Global',global_sales_pub)]
+
+def pub_viz(region):
+    na_df = pd.DataFrame(columns=['publisher','sales'])
+    for list in region[1]:
+        new_row = {'publisher':list[0],'sales':list[1]}
+        na_df = na_df.append(new_row,ignore_index=True)
+    print(na_df)
+    plt.figure(figsize=(10,6))
+    plt.title(region[0]+': Top Publishers')
+    plot = sns.barplot(x=na_df['publisher'],y=na_df['sales'],palette='mako_r')
+    plot.set_xticklabels(plot.get_xticklabels(), rotation=40, ha='right')
+    plt.ylabel('Total Unit Sales (in hundreds of millions)')
+    plt.xlabel('Publishers')
+    plt.show()
+
+for region in titles:
+    pub_viz(region)
 

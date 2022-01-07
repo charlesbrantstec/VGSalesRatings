@@ -73,7 +73,28 @@ print(vg_data['Platform'].unique())
 ######################################################################
 # TODO: Global Top Platforms
 
+# vg_data = pd.read_csv('output_csv/vg_data.csv')
+# top_platforms = vg_data['Platform']
+# platform_series = top_platforms.value_counts(ascending=False)
+# print(platform_series) 
+
+######################################################################
+# TODO: Data Exploration
+
+# TODO: Produce cardinality of columns
 vg_data = pd.read_csv('output_csv/vg_data.csv')
-top_platforms = vg_data['Platform']
-platform_series = top_platforms.value_counts(ascending=False)
-print(platform_series)
+
+columns = ['Name', 'Platform', 'Year_of_Release', 'Genre',
+       'Publisher', 'Developer']
+
+cardinality_dict = {}
+
+for column in columns:
+    unique = len(vg_data[column].unique())
+    cardinality_dict.update({column:unique})
+
+print(cardinality_dict)
+
+# print(vg_data.columns)
+
+
